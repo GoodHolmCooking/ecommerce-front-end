@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import {Product} from "../../models/product";
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import {HttpClient} from "@angular/common/http";
 
 
 @Component({
@@ -10,25 +11,25 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 })
 export class ProductListComponent {
   faPlus = faPlus;
-  inventory: Product[] = [
-    new Product("Milk", 3.62, 2),
-    new Product("Bread", 2.98, 12),
-    new Product("Pickles", 3.76, 3),
-    new Product("Milk", 3.62, 2),
-    new Product("Bread", 2.98, 12),
-    new Product("Pickles", 3.76, 3),
-    new Product("Milk", 3.62, 2),
-    new Product("Bread", 2.98, 12),
-    new Product("Pickles", 3.76, 3),
-    new Product("Milk", 3.62, 2),
-    new Product("Bread", 2.98, 12),
-    new Product("Pickles", 3.76, 3),
-    new Product("Milk", 3.62, 2),
-    new Product("Bread", 2.98, 12),
-    new Product("Pickles", 3.76, 3)
-  ];
+  inventory: Product[] = []
 
   onAdd() {
     console.log("Product added.");
+  }
+
+  ngOnInit() {
+    this.fetchPosts();
+  }
+
+  constructor(private http: HttpClient) {
+  }
+
+  private fetchPosts() {
+    this.http.get('http://localhost:8080/inventory').subscribe(posts => {
+      Object.entries(posts).forEach(([key, value]) => {
+        let product: Product = new Product(value.name, value.price, 10);
+        this.inventory.push(product);
+      })
+    });
   }
 }
